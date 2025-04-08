@@ -1,21 +1,57 @@
 use colored::Colorize;
 use prettytable::{row, Cell, Table};
 use serenity::{model::gateway::Ready, prelude::*};
+use std::io::{self, Write};
 
 pub async fn ready_tasks(ctx: &Context, ready: Ready) {
-    println!("Client '{}' connected", ready.user.name.to_string().green());
-
-    show_guilds(ctx, ready).await;
+    display_connection_status(&ready);
+    prompt_loop(&ctx, &ready).await;
 }
 
-pub async fn show_guilds(ctx: &Context, ready: Ready) {
+pub fn display_connection_status(ready: &Ready) {
+    println!("Client '{}' connected", ready.user.name.to_string().green());
+}
+
+pub async fn prompt_loop(ctx: &Context, ready: &Ready) {
+    println!("-h for help");
+
+    loop {
+        print!("> ");
+        io::stdout().flush().expect("Failed to flush stdout");
+
+        let mut input = String::with_capacity(64);
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {
+                let trimmed = input.trim();
+                match trimmed {
+                    "-h" => {
+                        println!("Executing help command");
+                    }
+                    "show-guilds" => show_guilds(&ctx, &ready).await,
+                    _ => {
+                        println!("copilot: Command not found");
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Error reading input: {}", e);
+                if e.kind() == io::ErrorKind::UnexpectedEof {
+                    println!("Input terminated. Exiting...");
+                    break;
+                }
+            }
+        }
+    }
+}
+
+pub async fn show_guilds(ctx: &Context, ready: &Ready) {
     let mut table = Table::new();
 
     // titles
     table.set_titles(row![Cell::new("ID"), Cell::new("Name"), Cell::new("Owner"),]);
 
     // rows
-    for guild in ready.guilds {
+    for guild in &ready.guilds {
         if guild.unavailable {
             match guild.id.to_partial_guild(&ctx.http).await {
                 Ok(partial_guild) => {
