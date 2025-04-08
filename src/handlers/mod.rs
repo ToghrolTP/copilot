@@ -2,7 +2,6 @@ mod message;
 mod reaction;
 mod ready;
 
-use colored::Colorize;
 use serenity::{
     async_trait,
     model::{
