@@ -1,5 +1,6 @@
 mod message;
 mod reaction;
+mod ready;
 
 use colored::Colorize;
 use serenity::{
@@ -21,8 +22,8 @@ impl EventHandler for Handler {
         };
     }
 
-    async fn ready(&self, _: Context, ready: Ready) {
-        println!("{} {}", ready.user.name.yellow(), "is connected!".green());
+    async fn ready(&self, ctx: Context, ready: Ready) {
+        ready::ready_tasks(&ctx, ready).await;
     }
 
     async fn reaction_add(&self, ctx: Context, add_reaction: Reaction) {
