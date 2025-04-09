@@ -1,4 +1,5 @@
 mod bot;
+mod cli;
 mod commands;
 mod constants;
 mod handlers;
