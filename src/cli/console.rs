@@ -1,13 +1,14 @@
 use crate::cli::{
-    constants::commands::{HELP, SHOW_GUILDS},
+    constants::commands::{HELP, SETUP_ROLES, SHOW_GUILDS},
     help::exe_help,
+    setup_roles::exe_setup_roles,
     show_guilds::exe_show_guilds,
 };
 use serenity::{model::gateway::Ready, prelude::*};
 use std::io::{self, Write};
 
 pub async fn prompt_loop(ctx: &Context, ready: &Ready) {
-    println!("-h for help");
+    println!("'help' for help");
 
     handle_commands(ctx, ready).await;
 }
@@ -24,6 +25,7 @@ pub async fn handle_commands(ctx: &Context, ready: &Ready) {
                 match trimmed {
                     HELP => exe_help().await,
                     SHOW_GUILDS => exe_show_guilds(&ctx, &ready).await,
+                    SETUP_ROLES => exe_setup_roles(ctx).await,
                     _ => println!("copilot: Command not found"),
                 }
             }

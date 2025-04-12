@@ -30,6 +30,5 @@ pub mod commands {
     pub const HELP: &str = "(0help";
     pub const PING: &str = "(0ping";
     pub const TIME: &str = "(0time";
-    pub const CONFIRM_TERMS: &str = "(0terms";
     pub const SETUP_REACTION_ROLES: &str = "(0setuproles";
 }
